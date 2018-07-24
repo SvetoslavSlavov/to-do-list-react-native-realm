@@ -62,6 +62,7 @@ export const deleteTodoList = todoListId => new Promise((resolve, reject) => {
         });
     }).catch((error) => reject(error));
 });
+
 export const queryAllTodoLists = () => new Promise ((resolve, reject) => {
     Realm.open(databaseOptions).then(realm => {
         let allTodoLists = realm.objects(TODO_LIST_SCHEMA);
@@ -70,3 +71,5 @@ export const queryAllTodoLists = () => new Promise ((resolve, reject) => {
         reject(error);
     });
 });
+
+export default new Realm(databaseOptions);
