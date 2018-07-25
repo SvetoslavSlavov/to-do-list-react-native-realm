@@ -7,8 +7,10 @@
     "test": "jest"
   },
   "dependencies": {
+    "eslint-config-rallycoding": "3.2.0",
     "react": "16.4.1",
     "react-native": "0.56.0",
+    "react-native-popup-dialog": "^0.14.52",
     "react-native-swipeout": "^2.3.3",
     "realm": "^2.13.0"
   },

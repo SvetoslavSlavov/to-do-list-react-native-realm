@@ -1,14 +1,13 @@
 import Realm from 'realm';
-import { resolve } from 'rsvp';
-// Schemas' name
-export const TODO_LIST_SCHEMA = 'TodoList';
+
+export const TODOLIST_SCHEMA = 'TodoList';
 export const TODO_SCHEMA = 'Todo';
 // Define your models and their properties
 export const TodoSchema = {
     name: TODO_SCHEMA,
     primaryKey: 'id',
     properties: {
-        id: 'int', // primary key
+        id: 'int',    // primary key
         name: { type: 'string', indexed: true },
         done: { type: 'bool', default: false },
     }
@@ -17,59 +16,59 @@ export const TodoListSchema = {
     name: TODOLIST_SCHEMA,
     primaryKey: 'id',
     properties: {
-        id: 'int', // primary key
+        id: 'int',    // primary key
         name: 'string',
         creationDate: 'date',
-        todos: { type: 'list', objectTypes: TODO_SCHEMA },  // One to many (ToDoList has 'many' Todos)
+        todos: { type: 'list', objectType: TODO_SCHEMA },
     }
 };
-// path - where the database is located
 const databaseOptions = {
     path: 'todoListApp.realm',
     schema: [TodoListSchema, TodoSchema],
-    schemaVersion: 0, // optional
+    schemaVersion: 0, //optional    
 };
-// function for TodoList
-// params
-// resolve -> success 
-// reject -> failed
-export const insertNewTodoList = newTodoList => new Promise((resolve, reject) => {
+//functions for TodoLists
+export const insertNewTodoList = newTodoList => new Promise((resolve, reject) => {    
     Realm.open(databaseOptions).then(realm => {
         realm.write(() => {
-            realm.create(TodoListSchema, newTodoList);
+            realm.create(TODOLIST_SCHEMA, newTodoList);
             resolve(newTodoList);
         });
     }).catch((error) => reject(error));
 });
-export const updateTodoList = todoList => new Promise ((resolve, reject) => {
-    Realm.open(databaseOptions).then(realm => {
-        // Get a ToDoList from specific ID
-        let updateTodoList = realm.objectForPrimaryKey(TODO_LIST_SCHEMA, todoList.id);
-        // You can update some other fields, if needed
-        updateTodoList.name = todoList.name;
-        // it is not necessary to set a value in resolve
-        resolve();
-    }).catch((error) => reject(error));
-});
-
-export const deleteTodoList = todoListId => new Promise((resolve, reject) => {
-    Realm.open(databaseOptions).then(realm => {
+export const updateTodoList = todoList => new Promise((resolve, reject) => {    
+    Realm.open(databaseOptions).then(realm => {        
         realm.write(() => {
-            // This will get all records in ToDoList table
-            let deletingToDoList = realm.objectForPrimaryKey(TodoListSchema, todoListId);
-            realm.delete(deletingToDoList);
-            resolve();          
+            let updatingTodoList = realm.objectForPrimaryKey(TODOLIST_SCHEMA, todoList.id);   
+            updatingTodoList.name = todoList.name;    
+            resolve();     
         });
-    }).catch((error) => reject(error));
+    }).catch((error) => reject(error));;
 });
-
-export const queryAllTodoLists = () => new Promise ((resolve, reject) => {
-    Realm.open(databaseOptions).then(realm => {
-        let allTodoLists = realm.objects(TODO_LIST_SCHEMA);
-        resolve(allTodoLists);
-    }).catch((error) => {
-        reject(error);
-    });
+export const deleteTodoList = todoListId => new Promise((resolve, reject) => {    
+    Realm.open(databaseOptions).then(realm => {        
+        realm.write(() => {
+            let deletingTodoList = realm.objectForPrimaryKey(TODOLIST_SCHEMA, todoListId);
+            realm.delete(deletingTodoList);
+            resolve();   
+        });
+    }).catch((error) => reject(error));;
 });
-
+export const deleteAllTodoLists = () => new Promise((resolve, reject) => {    
+    Realm.open(databaseOptions).then(realm => {        
+        realm.write(() => {
+            let allTodoLists = realm.objects(TODOLIST_SCHEMA);
+            realm.delete(allTodoLists);
+            resolve();
+        });
+    }).catch((error) => reject(error));;
+});
+export const queryAllTodoLists = () => new Promise((resolve, reject) => {    
+    Realm.open(databaseOptions).then(realm => {        
+        let allTodoLists = realm.objects(TODOLIST_SCHEMA);
+        resolve(allTodoLists);  
+    }).catch((error) => {        
+        reject(error);  
+    });;
+});
 export default new Realm(databaseOptions);
